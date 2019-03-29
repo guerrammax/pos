@@ -85,11 +85,17 @@ namespace pos
                     ValidateAudience = true,
                     ValidIssuer = appSettings.Site,
                     ValidAudience = appSettings.Audience,
-                    IssuerSigningKey = new SymmetricSecurityKey(key)
-                    
+                    IssuerSigningKey = new SymmetricSecurityKey(key)              
                 };
              });
 
+             services.AddAuthorization(options => {
+                options.AddPolicy("RequireLoggedIn", 
+                    policy => policy.RequireRole("Admin", "Customer", "Moderator").RequireAuthenticatedUser());
+                options.AddPolicy("RequireAdministratorRole", 
+                    policy => policy.RequireRole("Admin").RequireAuthenticatedUser());
+             });
+             
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

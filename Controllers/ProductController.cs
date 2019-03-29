@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using pos.Data;
 using pos.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace pos.Controllers
 {
@@ -23,12 +24,14 @@ namespace pos.Controllers
 
         //Get: api/products
          [HttpGet("[action]")]
-        public IActionResult GetProducts()
+         [Authorize(Policy = "RequireLoggedIn")]
+         public IActionResult GetProducts()
         {
             return Ok(_db.Products.ToList());
         }
-
+        
         [HttpPost("[action]")]
+         [Authorize(Policy = "RequireAdministratorRole")]
         public async Task<IActionResult> AddProduct([FromBody] ProductModel formdata)
         {
             var newproduct = new ProductModel
@@ -48,6 +51,7 @@ namespace pos.Controllers
         }
 
         [HttpPut("[action]/{id}")]
+         [Authorize(Policy = "RequireAdministratorRole")]
         public async Task<ActionResult> UpdateProduct( [FromRoute] int id, [FromBody] ProductModel formdata)
         {
          if (!ModelState.IsValid)
@@ -72,9 +76,9 @@ namespace pos.Controllers
          await _db.SaveChangesAsync();
          return Ok(new JsonResult("the product with id " + id + "is update"));
         }
-
         
         [HttpDelete("[action]/{id}")]
+         [Authorize(Policy = "RequireAdministratorRole")]
         public async Task<ActionResult>  DeleteProduct([FromRoute] int id)
         {
             if (!ModelState.IsValid)
