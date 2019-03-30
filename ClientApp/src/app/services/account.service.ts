@@ -11,6 +11,8 @@ export class AccountService {
 
   private baseUrlLogin : string ="/api/account/login";
 
+  private baseUrlRegister : string = "/api/account/register";
+
   private loginStatus = new BehaviorSubject<boolean>(this.checkLoginStatus());
   private UserName = new BehaviorSubject<string>(localStorage.getItem('username'));
   private UserRole=new BehaviorSubject<string>(localStorage.getItem('userRole'));
@@ -19,6 +21,19 @@ export class AccountService {
   {
 
   }
+
+   // Register Method
+   register(username: string, password: string, email : string ) 
+   {
+       return this.http.post<any>(this.baseUrlRegister, {username, password, email}).pipe(map(result => {
+           //registration was successful
+           return result;
+       
+       }, error => 
+       {
+           return error;
+       }));
+   }
 
 
   login(username: string, password:string)
