@@ -5,17 +5,22 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
 import { FormsModule,  ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 //Components
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
-import { ProductsComponent } from './products/products.component';
+
 import { HomeComponent } from './home/home.component';
 
 //modal bootstrap
 import { ModalModule } from 'ngx-bootstrap/modal';
+import {DataTablesModule  } from "angular-datatables";
+import { AccessDeniedComponent } from './errors/access-denied/access-denied.component';
+import { JwtInterceptor } from "./_helpers/jwt.Interceptor";
+import { AuthGuardService } from './guards/auth-guard.service';
+
 
 @NgModule({
   declarations: [
@@ -23,9 +28,9 @@ import { ModalModule } from 'ngx-bootstrap/modal';
     NavMenuComponent,
     LoginComponent,
     RegisterComponent,
-    ProductsComponent,
-    HomeComponent
-    
+    HomeComponent,
+    AccessDeniedComponent,
+        
   ],
   imports: [
     BrowserModule,
@@ -33,9 +38,14 @@ import { ModalModule } from 'ngx-bootstrap/modal';
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
-    ModalModule.forRoot()
+    ModalModule.forRoot(),
+
+    DataTablesModule
   ],
-  providers: [],
+  providers: [
+    AuthGuardService,
+    {provide:HTTP_INTERCEPTORS, useClass:JwtInterceptor,multi:true}
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
